@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des chatons{% endblock %}
+
+
+{% block body %}
+    <div class="container">
+        <h1>Bienvenue sur la gestion des chatons</h1>
+
+        Le dossier Photos contient :
+
+        <ul>
+            {% for d in dossiers %}
+                <li>{{ d.filename }}</li>
+            {% endfor %}
+        </ul>
+
+    </div>
+{% endblock %}
