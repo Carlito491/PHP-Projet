@@ -11,9 +11,15 @@
 
         <ul>
             {% for d in dossiers %}
-                <li>{{ d.filename }}</li>
+                <li>
+                    <a href="{{ path("afficherDossier", {"nomDuDossier": d.filename}) }}">
+                        {{ d.filename }}
+                    </a>
+                </li>
             {% endfor %}
         </ul>
 
+        <h2>Ajouter un dossier</h2>
+        {{ form(formulaire) }} {# form() crée un formulaire avec la vue reçue #}
     </div>
 {% endblock %}
