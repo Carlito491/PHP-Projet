@@ -21,5 +21,21 @@
 
         <h2>Ajouter un dossier</h2>
         {{ form(formulaire) }} {# form() crée un formulaire avec la vue reçue #}
+
+        Le dossier Propriétaires contient :
+
+        <ul>
+            {% for p in proprios %}
+                <li>
+                    <a href="{{ path("afficherProprio", {"nomDuProprio": p.filename}) }}">
+                        {{ p.filename }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <h2>Ajouter un propriétaire</h2>
+        {{ form(formulaire2) }} {# form() crée un formulaire avec la vue reçue #}
     </div>
+
 {% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des propriétaires{% endblock %}
+
+
+{% block body %}
+    <div class="container">
+        <h1>Propriétaire {{ nomDuProprio }}</h1>
+        <div class="row">
+            {% for f in fichiers %}
+                {% include "home/_chaton.html.twig" %}
+            {% endfor %}
+        </div>
+        <h2>Ajouter un propriétaire</h2>
+        {{ form(formulaire2) }}
+    </div>
+{% endblock %}

@@ -5,25 +5,24 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class HomeController extends AbstractController
+class ProprietaireController extends AbstractController
 {
     /**
      * @Route("/", name="app_home")
      */
-    public function index (Request $request): Response
+    public function index(Request $request): Response
     {
         //Ajouter un formulaire pour créer un nouveau dossier de chatons
         $form = $this->createFormBuilder() //je récupère un constructeur de formulaire
-                ->add("dossier", TextType::class, ["label"=>"Nom du dossier à créer"])
-                ->add("ok", SubmitType::class, ["label"=>"OK"])
-                ->getForm();//je récupère une instance de formulaire créé par le builder à la fin
+        ->add("proprio", TextType::class, ["label"=>"Nom du propriétaire"])
+            ->add("ok", SubmitType::class, ["label"=>"OK"])
+            ->getForm();//je récupère une instance de formulaire créé par le builder à la fin
 
         //Gestion du retour en POST
         //1 : ajouter un paramètre Request à la méthode
@@ -33,23 +32,23 @@ class HomeController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()){
             //lire les données
             $data=$form->getData();
-            $dossier=$data["dossier"];
+            $proprio=$data["proprio"];
 
             //Traitement
             $fs=new Filesystem();
-            $fs->mkdir("Photos/".$dossier);
+            $fs->mkdir("Proprietaires/".$proprio);
 
-            return $this->redirectToRoute("afficherDossier", ["nomDuDossier"=>$dossier]);
+            return $this->redirectToRoute("afficherProprio", ["nomDuProprio"=>$proprio]);
         }
 
         //Constituer le modèle à transmettre à la vue
         $finder=new Finder();
-        $finder->directories()->in("Photos");
+        $finder->directories()->in("Proprietaires");
 
         //je transmets le modèle à la vue
         return $this->render('home/index.html.twig', [
-            "dossiers"=>$finder,
-            "formulaire"=>$form->createView()
+            "proprios"=>$finder,
+            "formulaire2"=>$form->createView()
         ]);
     }
 
@@ -57,22 +56,22 @@ class HomeController extends AbstractController
 
 
     /**
-     * @Route("/Photos/{nomDuDossier}", name="afficherDossier")
+     * @Route("/Proprietaires/{nomDuProprio}", name="afficherProprio")
      */
-    public function afficherDossier($nomDuDossier, Request $request): Response{
+    public function afficherProprio($nomDuProprio, Request $request): Response{
 
         //vérifier si le dossier existe
         $fs=new Filesystem();
-        $chemin="Photos/".$nomDuDossier;
+        $chemin="Proprietaires/".$nomDuProprio;
         //s'il n'existe pas, je lève une erreur 404
         if(!$fs->exists($chemin))
-            throw $this->createNotFoundException("Le dossier $nomDuDossier n'existe pas");
+            throw $this->createNotFoundException("Le propriétaire $nomDuProprio n'existe pas");
 
         //Ajouter un formulaire permettant d'ajouter une photo
         //avec un champ de type FileType et un bouton OK
         //Création d'un formulaire
         $form=$this->createFormBuilder()
-            ->add("photo", FileType::class, ['label'=>"Choisissez un joli chaton sur votre ordinateur"])
+            ->add("proprietaire", FileType::class, ['label'=>"Choisissez un propriétaire sur votre ordinateur"])
             ->add("ajouter", SubmitType::class, ["label"=>"Envoyer"])
             ->getForm();
 
@@ -82,8 +81,8 @@ class HomeController extends AbstractController
             $data = $form->getData();
 
             //on déplace le fichier uploadé au bon endroit
-            $data["photo"]->move("Photos/" . $nomDuDossier
-                , $data["photo"]->getClientOriginalName());
+            $data["proprietaire"]->move("Proprietaires/" . $nomDuProprio
+                , $data["proprietaire"]->getClientOriginalName());
 
         }
 
@@ -91,10 +90,10 @@ class HomeController extends AbstractController
         $finder=new Finder();
         $finder->files()->in($chemin);
 
-        return $this->render('home/afficherDossier.html.twig', [
-            "nomDuDossier"=>$nomDuDossier,
+        return $this->render('home/afficherProprio.html.twig', [
+            "nomDuProprio"=>$nomDuProprio,
             "fichiers"=>$finder,
-            "formulaire"=>$form->createView()
+            "formulaire2"=>$form->createView()
         ]);
     }
 }
